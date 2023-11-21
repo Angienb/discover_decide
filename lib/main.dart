@@ -1,20 +1,19 @@
+import 'package:discover_decide/routes/pages.dart';
 import 'package:flutter/material.dart';
-
-import 'src/app.dart';
-import 'src/settings/settings_controller.dart';
-import 'src/settings/settings_service.dart';
+import 'package:get/get.dart';
+import 'app/theme/theme_data.dart';
+import 'routes/routes.dart';
 
 void main() async {
-  // Set up the SettingsController, which will glue user settings to multiple
-  // Flutter Widgets.
-  final settingsController = SettingsController(SettingsService());
-
-  // Load the user's preferred theme while the splash screen is displayed.
-  // This prevents a sudden theme change when the app is first displayed.
-  await settingsController.loadSettings();
-
-  // Run the app and pass in the SettingsController. The app listens to the
-  // SettingsController for changes, then passes it further down to the
-  // SettingsView.
-  runApp(MyApp(settingsController: settingsController));
+  GetMaterialApp appMaterial = GetMaterialApp(
+      fallbackLocale: const Locale('en', 'GB'),
+      initialRoute: Routes.HOME,
+      getPages: AppPages.pages,
+      debugShowCheckedModeBanner: false,
+      builder: (context, child) => child!,
+      transitionDuration: const Duration(milliseconds: 237),
+      defaultTransition: Transition.noTransition,
+      theme: appTheme(),
+      title: 'Discover Decide');
+  runApp(appMaterial);
 }

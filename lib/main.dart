@@ -10,10 +10,14 @@ void main() async {
       initialRoute: Routes.HOME,
       getPages: AppPages.pages,
       debugShowCheckedModeBanner: false,
-      builder: (context, child) => child!,
+      builder: mainBuilder,
       transitionDuration: const Duration(milliseconds: 237),
       defaultTransition: Transition.noTransition,
       theme: appTheme(),
       title: 'Discover Decide');
   runApp(appMaterial);
+}
+
+Widget mainBuilder(BuildContext context, Widget? child) {
+  return Overlay(initialEntries: [OverlayEntry(builder: (context) => child!)]);
 }

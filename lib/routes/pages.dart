@@ -1,4 +1,4 @@
-import 'package:discover_decide/app/screens/result.dart/result_screen.dart';
+import 'package:discover_decide/app/screens/result/result.dart';
 import 'package:discover_decide/routes/routes.dart';
 import 'package:get/get.dart';
 

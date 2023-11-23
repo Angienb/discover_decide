@@ -2,9 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:discover_decide/app/data/providers/api_utils.dart';
 import 'package:discover_decide/app/widgets/alerts.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 const API_HOST = "api.openai.com";
@@ -16,7 +15,7 @@ Map<String, String> baseHeaders = {
   'Authorization': 'Bearer $OPENAI_API_KEY',
 };
 
-Future<Map<String, dynamic>> call({String? body}) async {
+Future<Map<String, dynamic>> call({required String body}) async {
   try {
     Uri uri = Uri.parse(API_URL);
 
@@ -25,31 +24,42 @@ Future<Map<String, dynamic>> call({String? body}) async {
         body: jsonEncode({
           "model": "gpt-3.5-turbo",
           "messages": [
-            {"role": "user", "content": "Say this is a test!"}
+            {
+              "role": "user",
+              "content":
+                  "$body, sort it by rating and don't explain anything else"
+            }
           ],
         }));
-
     print('response ${response.statusCode} ${response.body}');
     return _handleResponse(response);
   } on SocketException {
-    showSnackBar('No internet', 'Check your internet connection and try again');
+    showSnackBar('No internet', 'Check your internet connection and try again',
+        icon: Icons.signal_wifi_connected_no_internet_4_rounded);
     return {'error': 'No internet connection'};
   } catch (e, stck) {
     log('ERROR IN API CALL  $e $stck');
-    // Return standardized error code so that no internal API parser breaks
-    // under strange error/exception conditions
     return {'error': 'API call failed'};
   }
 }
 
 _handleResponse(http.Response response) {
   switch (response.statusCode) {
-    case StatusCode.OK:
-      return jsonDecode(response.body);
-    case StatusCode.TOO_MANY_REQUESTS:
+    case 200:
+      return {'success': jsonDecode(response.body)};
+    case 429:
       showSnackBar('Too many requests',
-          'You have reached the limit of requests. You need to update your plan.');
+          'You have reached the limit of requests. You need to update your plan.',
+          icon: Icons.price_check_rounded);
       return {'error': 'Too many requests'};
+    case 400:
+      showSnackBar('Bad request', 'Please check your request and try again',
+          icon: Icons.error_rounded);
+      return {'error': 'Bad request'};
+    case 401:
+      showSnackBar('Unauthorized', 'Please check your API key and try again',
+          icon: Icons.lock);
+      return {'error': 'Unauthorized'};
     default:
       return {'error': 'Unknown error'};
   }

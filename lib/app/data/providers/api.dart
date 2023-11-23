@@ -5,14 +5,14 @@ import 'dart:io';
 import 'package:discover_decide/app/widgets/alerts.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'api_key.dart';
 
 const API_HOST = "api.openai.com";
 const API_URL = "https://api.openai.com/v1/chat/completions";
-const OPENAI_API_KEY = "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";
 
 Map<String, String> baseHeaders = {
   'Content-type': 'application/json',
-  'Authorization': 'Bearer $OPENAI_API_KEY',
+  'Authorization': 'Bearer $OPENAI_API_KEY'
 };
 
 Future<Map<String, dynamic>> call({required String body}) async {
@@ -31,7 +31,6 @@ Future<Map<String, dynamic>> call({required String body}) async {
             }
           ],
         }));
-    print('response ${response.statusCode} ${response.body}');
     return _handleResponse(response);
   } on SocketException {
     showSnackBar('No internet', 'Check your internet connection and try again',
